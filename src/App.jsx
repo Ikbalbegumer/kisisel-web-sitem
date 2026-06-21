@@ -241,10 +241,13 @@ function App() {
       title: "Çizimlerim 🎨",
       content: (
         <div className="gallery-grid">
-          <div className="gallery-item"><img src="/cizim1.jpeg" alt="Çizim 1" /></div>
-          <div className="gallery-item"><img src="/resim2.jpeg" alt="Çizim 2" /></div>
+          <div className="gallery-item"><img src="/cizim1.jpg" alt="Çizim 1" /></div>
+          <div className="gallery-item"><img src="/resim2.jpg" alt="Çizim 2" /></div>
           <div className="gallery-item"><img src="/resim3.jpg" alt="Çizim 3" /></div>
-          <div className="gallery-item"><img src="/cizim4.png" alt="Çizim 4" /></div>
+          <div className="gallery-item"><img src="/cizim4.jpg" alt="Çizim 4" /></div>
+          <div className="gallery-item"><img src="/cizim10.jpg" alt="Çizim 5" /></div>
+          <div className="gallery-item"><img src="/cizim11.jpg" alt="Çizim 6" /></div>
+          <div className="gallery-item"><img src="/cizim12.jpg" alt="Çizim 7" /></div>
         </div>
       )
     },
@@ -270,7 +273,7 @@ function App() {
           <div className="poster-container">
             <img src="/joji.jpg" alt="Joji" />
           </div>
-          <p style={{ marginTop: '15px' }}>Joji çok sevdiğim şarkıcılardan birisidir.</p>
+          <p style={{ marginTop: '15px' }}>Duvardaki bu poster Joji'nin albüm kapağının resmi.Kendisi sevdiğim şarkıcılardan birisidir.</p>
         </>
       )
     },
@@ -286,7 +289,7 @@ function App() {
       title: "Kortlarda 🎾",
       content: (
         <>
-          <p>Boş zamanlarımda tenis oynuyorum.</p>
+          <p>Arkadaşlarımla tenis oynamayı seviyorum.</p>
           <div className="gallery-grid">
             <div className="gallery-item"><img src="/tenis1.JPG" alt="Tenis 1" /></div>
           </div>
@@ -294,15 +297,21 @@ function App() {
       )
     },
     kitaplik: {
-      title: "Kütüphanem 📚",
+      title: "Kütüphanemdeki Sevdiğim Bazı Kitaplar 📚",
       content: (
         <ul style={{ textAlign: 'left', display: 'inline-block', lineHeight: '1.8' }}>
           <li><b>Haşlanmış Harikalar Diyarı ve Dünyanın Sonu</b> - Haruki Murakami</li>
+          <li><b>İmkansızın Şarkısı</b> - Haruki Murakami</li>
           <li><b>Nietzsche Ağladığında</b> - Irvin D. Yalom</li>
           <li><b>Düşüş</b> - Albert Camus</li>
-          <li><b>John Verdon</b> Kitap Serisi</li>
+          <li><b>Stoner</b> - John Williams</li>
+          <li><b>Kurt Gölü</b> John Verdon</li>
           <li><b>Martin Eden</b> - Jack London</li>
           <li><b>Gün Olur Asra Bedel</b> - Cengiz Aytmatov</li>
+          <li><b>Monte Kristo Kontu</b> -Alexandre Dumas</li>
+          <li><b>Usta ve Margarita</b> - Jack London</li>
+          <li><b>1984</b> - George Orwell </li>
+          <li><b>Fahrenheit 451</b> - Ray Bradbury</li>
         </ul>
       )
     },
