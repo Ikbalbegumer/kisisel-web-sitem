@@ -229,6 +229,21 @@ function App() {
             <a href="/muzikcalar.png" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
               <div className="mac-item">📁 Python SQLite3 Müzik Çalar</div>
             </a>
+            {/* Mevcut dosyaların (CV, Robot Kol vs.) bittiği yerin hemen altına bunu ekle: */}
+            <a 
+              href="#" 
+              onClick={(e) => { e.preventDefault(); setActiveModal('fakeError'); }} 
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              <div className="mac-item" style={{ 
+                color: '#ff3333', 
+                fontWeight: 'bold', 
+                border: '2px dashed #ff3333',
+                backgroundColor: 'rgba(255, 0, 0, 0.05)'
+              }}>
+                🚨 SİSTEM_AYARLARI_DOKUNMA.exe
+              </div>
+            </a>
           </div>
         </>
       )
@@ -347,12 +362,12 @@ function App() {
     easteregg: {
       title: " ÖĞRENCİ İŞLERİ SİSTEMİNE SIZILDI - Final notu: 100",
       content: (
-        <div style={{ flex: 1, width: '100%', position: 'relative', overflow: 'hidden', background: '#000' }}>
+      <div style={{ width: '100%', minHeight: '70vh', position: 'relative', overflow: 'hidden', background: '#000' }}>
           <MatrixRain />
           <audio src="/rickroll.mp3" autoPlay loop style={{ display: 'none' }}></audio>
           <div className="hacker-overlay-text">
             <div style={{ fontSize: '1rem', marginBottom: '10px' }}>[BEGUM OS v1.0 - EĞLENCE MODU AKTİF]</div>
-            <div style={{ fontSize: '2.0rem', marginTop: '20px', fontWeight: 'bold' }}>
+            <div style={{ fontSize: '1.8rem', marginTop: '20px', fontWeight: 'bold' }}>
               &gt; Merhaba Hocam, <br/> Rickroll'landınız_😄 <br/> <br/> 
              
              Rick Astley diyor ki: "Bu finalden sizi asla bırakmayacağım" 🕺
@@ -364,7 +379,75 @@ function App() {
           </div>
         </div>
       )
-    }
+    },
+    fakeError: {
+      title: "", 
+      content: (
+        <div style={{
+          background: '#1e1e1e',
+          color: '#f8c555',
+          fontFamily: "'Courier New', Courier, monospace",
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          textAlign: 'left',
+          boxSizing: 'border-box',
+          padding: '20px'
+        }}>
+          <div style={{ maxWidth: '700px', width: '100%' }}>
+            {/* Sahte Vite Başlığı */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '30px', justifyContent: 'center' }}>
+              <span style={{ color: '#ff3333', fontSize: '2rem' }}>❌</span>
+              <h1 style={{ color: '#fff', fontSize: '1.6rem', margin: 0, fontWeight: 'bold' }}>VITE / REACT FATAL ERROR</h1>
+            </div>
+
+            <h2 style={{ color: '#ff3333', fontSize: '2.2rem', margin: '0 0 15px 0' }}>🚨 Uncaught TypeError</h2>
+            <p style={{ fontSize: '1.4rem', color: '#fff', marginBottom: '20px' }}>
+              <span style={{ color: '#ff7b72' }}>Professor_Forgot_To_Give_AA</span> is not a function
+            </p>
+            
+            {/* Sahte Hata Satırları */}
+            <div style={{ background: '#2d2d2d', padding: '20px', borderRadius: '5px', marginBottom: '40px', borderLeft: '4px solid #ff7b72' }}>
+              <p style={{ margin: '8px 0', color: '#8b949e', fontSize: '1.1rem' }}>
+                at <span style={{ color: '#d2a8ff' }}>evaluateFinalProject</span> (src/Balikesir_Uni_Final.js:100:0)
+              </p>
+              <p style={{ margin: '8px 0', color: '#8b949e', fontSize: '1.1rem' }}>
+                at <span style={{ color: '#d2a8ff' }}>App.render</span> (src/App.jsx:404:13)
+              </p>
+              <p style={{ margin: '8px 0', color: '#8b949e', fontSize: '1.1rem' }}>
+                at <span style={{ color: '#d2a8ff' }}>ReactDom.createRoot</span> (node_modules/react-dom/client.js:12:5)
+              </p>
+            </div>
+            
+            {/* Kurtarma Butonu */}
+            <div style={{ textAlign: 'center' }}>
+              <button 
+                onClick={() => setActiveModal('bilgisayar')}
+                style={{
+                  background: '#fff',
+                  color: '#000',
+                  border: 'none',
+                  padding: '12px 25px',
+                  fontSize: '1.1rem',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  borderRadius: '6px',
+                  boxShadow: '0 4px 15px rgba(255, 255, 255, 0.2)',
+                  transition: '0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+              >
+               Odaya Geri Dönmek İçin Tıklayın...
+              </button>
+            </div>
+          </div>
+        </div>
+      )
+    },
   };
 
   return (
@@ -391,12 +474,15 @@ function App() {
 
       {activeModal && modalContents[activeModal] && (
         <div className="modal-overlay" onClick={() => setActiveModal(null)}>
-          {/* YENİ SATIR (Koşullu sınıf ekleme): */}
-          {/* App.jsx en alt kısımlar */}
-            <div className={`modal-content ${activeModal === 'easteregg' ? 'hacker-modal' : ''}`} onClick={(e) => e.stopPropagation()}>
+          <div 
+            className={`modal-content ${activeModal === 'easteregg' ? 'hacker-modal' : ''} ${activeModal === 'fakeError' ? 'fatal-error-modal' : ''}`} 
+            onClick={(e) => e.stopPropagation()}
+          >
             <button className="close-btn" onClick={() => setActiveModal(null)}>×</button>
             <h2>{modalContents[activeModal].title}</h2>
-            {modalContents[activeModal].content}
+            <div className="modal-body">
+              {modalContents[activeModal].content}
+            </div>
           </div>
         </div>
       )}

@@ -287,3 +287,23 @@ p { color: #444; font-size: 1.1rem; line-height: 1.5; }
   padding: 20px;
   border-radius: 10px;
 }
+/* 🚨 TAM EKRAN HATA (FAKE BSOD) STİLLERİ 🚨 */
+.modal-content.fatal-error-modal {
+  background: #1e1e1e !important; /* Vite arka plan siyahı */
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Tam ekranda standart çarpı butonunu ve beyaz başlığı gizle */
+.modal-content.fatal-error-modal .close-btn,
+.modal-content.fatal-error-modal > h2 {
+  display: none !important;
+}
