@@ -336,20 +336,22 @@ function App() {
       )
     },
     easteregg: {
-      title: "📡 SİSTEME SIZILDI - RICKROLL PROTOKOLÜ",
+      title: " ÖĞRENCİ İŞLERİ SİSTEMİNE SIZILDI - Final notu: 100",
       content: (
         <div style={{ flex: 1, width: '100%', position: 'relative', overflow: 'hidden', background: '#000' }}>
           <MatrixRain />
           <audio src="/rickroll.mp3" autoPlay loop style={{ display: 'none' }}></audio>
           <div className="hacker-overlay-text">
             <div style={{ fontSize: '1rem', marginBottom: '10px' }}>[BEGUM OS v1.0 - EĞLENCE MODU AKTİF]</div>
-            <div style={{ fontSize: '2.5rem', marginTop: '20px', fontWeight: 'bold' }}>
-              &gt; Merhaba Hocam, <br/> Rickroll'landınız_
+            <div style={{ fontSize: '2.0rem', marginTop: '20px', fontWeight: 'bold' }}>
+              &gt; Merhaba Hocam, <br/> Rickroll'landınız_ <br/> <br/> 
+             
+             Rick Astley diyor ki: "Bu finalden sizi asla bırakmayacağım" 🕺
             </div>
             <div style={{ fontSize: '1rem', marginTop: '15px', color: '#0F0' }}>
                "Never Gonna Give You Up, Never Gonna Let You Down..."
             </div>
-            <div style={{ fontSize: '0.8rem', marginTop: '20px', color: '#f00' }}>[DERS: İNTERNET PROGRAMLAMA - NOT: 100?]</div>
+            <div style={{ fontSize: '0.8rem', marginTop: '20px', color: '#f00' }}>[DERS: İNTERNET PROGRAMLAMA - Final: 100?]</div>
           </div>
         </div>
       )
