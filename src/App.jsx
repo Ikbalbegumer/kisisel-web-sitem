@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react'; // useRef eklendi
 import './App.css';
 
 // --- GEZİLERİM İÇİN ÖZEL SLIDER BİLEŞENİ ---
@@ -82,10 +82,90 @@ const MusicSlider = () => {
     </div>
   );
 };
+// --- 👽 MATRIX DİJİTAL YAĞMUR BİLEŞENİ (CANVAS TABANLI) ---
+const MatrixRain = () => {
+  const canvasRef = useRef(null);
 
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+
+    // Canvas boyutunu modal container'a göre ayarla
+    const parent = canvas.parentElement;
+    canvas.width = parent.offsetWidth;
+    canvas.height = parent.offsetHeight;
+
+    // Kullanılacak karakterler (Japonca, Latin, Sayılar)
+    const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
+    const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const nums = '0123456789';
+    const alphabet = katakana + latin + nums;
+
+    const fontSize = 16;
+    const columns = canvas.width / fontSize;
+
+    // Her sütun için yağmur damlasının y-koordinatını tutan dizi
+    const rainDrops = [];
+    for (let x = 0; x < columns; x++) {
+      rainDrops[x] = 1; // Hepsi en tepeden başlasın
+    }
+
+    const draw = () => {
+      // Arka planı yarı şeffaf siyah yap (kuyruk efekti için)
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Karakter stilleri
+      ctx.fillStyle = '#0F0'; // Neon yeşil
+      ctx.font = fontSize + 'px monospace';
+
+      // Her sütun için karakteri çiz ve damlayı düşür
+      for (let i = 0; i < rainDrops.length; i++) {
+        const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+        ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+        // Damla ekranın altına geldiyse rastgele bir ihtimalle tepeye sıfırla
+        if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          rainDrops[i] = 0;
+        }
+        rainDrops[i]++;
+      }
+    };
+
+    const intervalId = setInterval(draw, 30); // 30ms'de bir çiz (akıcı animasyon)
+
+    // Bileşen kapandığında animasyonu temizle (hafıza sızıntısını önler)
+    return () => clearInterval(intervalId);
+  }, []);
+
+  return <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%' }} />;
+};
 function App() {
   const [activeModal, setActiveModal] = useState(null);
   const [lightMode, setLightMode] = useState(0); 
+  useEffect(() => {
+    let tusHafizasi = "";
+    const hedefSifre = "begum"; // Hoca burayı tuşlayacak
+
+    const harfTakipEt = (e) => {
+      if (e.key.length === 1) {
+        tusHafizasi += e.key.toLowerCase();
+        
+        if (tusHafizasi.length > hedefSifre.length) {
+          tusHafizasi = tusHafizasi.slice(-hedefSifre.length);
+        }
+
+        // App.jsx içindeki useEffect şifre dinleyicisi
+       if (tusHafizasi === hedefSifre) {
+        setActiveModal('secretBait'); // 'easteregg' yerine 'secretBait' yaptık
+        tusHafizasi = ""; 
+}
+      }
+    };
+
+    window.addEventListener('keydown', harfTakipEt);
+    return () => window.removeEventListener('keydown', harfTakipEt);
+  }, []);
 
   const getLightClass = () => {
     if (lightMode === 1) return 'light-blue active';
@@ -225,6 +305,54 @@ function App() {
           <li><b>Gün Olur Asra Bedel</b> - Cengiz Aytmatov</li>
         </ul>
       )
+    },
+    // ... kitaplik vs bittikten sonra:
+    secretBait: {
+      title: "🕵️ Gizli Bölgeye Giriş Yapıldı",
+      content: (
+        <div style={{ padding: '40px 20px', textAlign: 'center' }}>
+          <p style={{ fontSize: '1.2rem', marginBottom: '30px', color: '#333' }}>
+            Klavye şifresini başarıyla çözdünüz Hocam. <br/> 
+            Burada kimsenin bilmediği, projeye dair en büyük gerçeği gizledim...
+          </p>
+          <button 
+            onClick={() => setActiveModal('easteregg')}
+            style={{
+              background: 'linear-gradient(45deg, #000, #444)',
+              color: '#fff',
+              border: 'none',
+              padding: '18px 30px',
+              borderRadius: '15px',
+              fontSize: '1.2rem',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
+              transition: '0.3s'
+            }}
+          >
+            🔒 Benim Hakkımdaki En Büyük Sırrı Öğrenmek İçin Tıklayın
+          </button>
+        </div>
+      )
+    },
+    easteregg: {
+      title: "📡 SİSTEME SIZILDI - RICKROLL PROTOKOLÜ",
+      content: (
+        <div style={{ flex: 1, width: '100%', position: 'relative', overflow: 'hidden', background: '#000' }}>
+          <MatrixRain />
+          <audio src="/rickroll.mp3" autoPlay loop style={{ display: 'none' }}></audio>
+          <div className="hacker-overlay-text">
+            <div style={{ fontSize: '1rem', marginBottom: '10px' }}>[BEGUM OS v1.0 - EĞLENCE MODU AKTİF]</div>
+            <div style={{ fontSize: '2.5rem', marginTop: '20px', fontWeight: 'bold' }}>
+              &gt; Merhaba Hocam, <br/> Rickroll'landınız_
+            </div>
+            <div style={{ fontSize: '1rem', marginTop: '15px', color: '#0F0' }}>
+               "Never Gonna Give You Up, Never Gonna Let You Down..."
+            </div>
+            <div style={{ fontSize: '0.8rem', marginTop: '20px', color: '#f00' }}>[DERS: İNTERNET PROGRAMLAMA - NOT: 100?]</div>
+          </div>
+        </div>
+      )
     }
   };
 
@@ -252,7 +380,9 @@ function App() {
 
       {activeModal && modalContents[activeModal] && (
         <div className="modal-overlay" onClick={() => setActiveModal(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          {/* YENİ SATIR (Koşullu sınıf ekleme): */}
+          {/* App.jsx en alt kısımlar */}
+            <div className={`modal-content ${activeModal === 'easteregg' ? 'hacker-modal' : ''}`} onClick={(e) => e.stopPropagation()}>
             <button className="close-btn" onClick={() => setActiveModal(null)}>×</button>
             <h2>{modalContents[activeModal].title}</h2>
             {modalContents[activeModal].content}

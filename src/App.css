@@ -236,3 +236,54 @@ p { color: #444; font-size: 1.1rem; line-height: 1.5; }
 @keyframes fadeIn {
   to { opacity: 1; }
 }
+/* --- 👽 HACKER MODAL ÖZEL STİLLERİ --- */
+
+/* Modal içeriğini hacker temasına çevirir (Sadece easteregg aktifken) */
+.modal-content.hacker-modal {
+  background: #000 !important; /* Arka planı simsiyah yap */
+  color: #0F0 !important; /* Yazıları neon yeşil yap */
+  border: 2px solid #0F0; /* Neon yeşil çerçeve ekle */
+  box-shadow: 0 0 30px rgba(0, 255, 0, 0.6); /* Yeşil parlama efekti */
+  font-family: 'Courier New', Courier, monospace; /* Terminal yazı tipi */
+  padding: 0 !important; /* Matrix yağmuru tam sığsın diye padding'i sıfırla */
+  overflow: hidden; /* Dışarı taşmaları engelle */
+  max-width: 800px;
+  width: 90%;
+  height: 80vh; /* Ekranın %80'ini kaplasın */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hacker modalı içindeki başlık stili */
+.modal-content.hacker-modal h2 {
+  color: #0F0;
+  border-bottom: 1px solid #0F0;
+  padding: 15px;
+  margin: 0;
+  background: rgba(0, 20, 0, 0.8); /* Hafif yeşil şeffaf arka plan */
+}
+
+/* Hacker modalı içindeki kapatma butonu stili */
+.modal-content.hacker-modal .close-btn {
+  color: #0F0;
+  opacity: 0.8;
+}
+.modal-content.hacker-modal .close-btn:hover {
+  color: #fff;
+  opacity: 1;
+}
+
+/* Matrix yağmurunun arkasında duracak terminal metni stili */
+.hacker-overlay-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  text-shadow: 0 0 10px #0F0;
+  z-index: 10; /* Yağmurun üstünde durması için */
+  pointer-events: none; /* Tıklamaları engelleme */
+  background: rgba(0, 0, 0, 0.6);
+  padding: 20px;
+  border-radius: 10px;
+}
