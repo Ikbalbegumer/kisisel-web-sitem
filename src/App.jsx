@@ -353,7 +353,7 @@ function App() {
           <div className="hacker-overlay-text">
             <div style={{ fontSize: '1rem', marginBottom: '10px' }}>[BEGUM OS v1.0 - EĞLENCE MODU AKTİF]</div>
             <div style={{ fontSize: '2.0rem', marginTop: '20px', fontWeight: 'bold' }}>
-              &gt; Merhaba Hocam, <br/> Rickroll'landınız_ <br/> <br/> 
+              &gt; Merhaba Hocam, <br/> Rickroll'landınız_😄 <br/> <br/> 
              
              Rick Astley diyor ki: "Bu finalden sizi asla bırakmayacağım" 🕺
             </div>
