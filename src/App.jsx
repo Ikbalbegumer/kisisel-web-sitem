@@ -7,21 +7,21 @@ const ImageSlider = () => {
   
   // HATA DÜZELTİLDİ: /public/ yazıları kaldırıldı, direkt / ile başlatıldı
   const images = [
-    "/doga1.png", 
-    "/doga2.jpeg", 
-    "/doga3.jpeg", 
-    "/doga4.JPG",
-    "/doga5.jpeg",
-    "/doga6.jpeg",
-    "/doga7.jpeg",
-    "/doga8.jpeg",
-    "/kus.jpeg",
-    "/samandag.jpeg",
-    "/zürih1.jpeg",
-    "/zürih2.jpeg",
-    "/zürih3.jpeg",
-    "/zürih4.jpeg",
-    "/zürih5.jpeg"
+    { img: "/doga1.png", name: "isvicre" },
+    "/doga2.jpeg", { img: "/doga2.jpeg", name: "Isvicre" },
+    "/doga3.jpeg", { img: "/doga3.jpeg", name: "Isvicre" },
+    "/doga4.JPG",{ img: "/doga4.JPG", name: "DegirmenBogazı" },
+    "/doga5.jpeg",{ img: "/doga5.jpeg", name: "Bozok" },
+    "/doga6.jpeg",{ img: "/doga6.jpeg", name: "doga6" },
+    "/doga7.jpeg",{ img: "/doga7.jpeg", name: "Isvicre" },
+    "/doga8.jpeg",{ img: "/doga8.jpeg", name: "TuzGölü" },
+    "/kus.jpeg",{ img: "/kus.jpeg", name: "doga9" },
+    "/samandag.jpeg",{ img: "/samandag.jpeg", name: "samandag" },
+    "/zürih1.jpeg",{ img: "/zürih1.jpeg", name: "Bern" },
+    "/zürih2.jpeg",{ img: "/zürih2.jpeg", name: "Bern" },
+    "/zürih3.jpeg",{ img: "/zürih3.jpeg", name: "zürih3" },
+    "/zürih4.jpeg",{ img: "/zürih4.jpeg", name: "zürih4" },
+    "/zürih5.jpeg",{ img: "/zürih5.jpeg", name: "zürih5" },
   ];
 
   const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % images.length);
