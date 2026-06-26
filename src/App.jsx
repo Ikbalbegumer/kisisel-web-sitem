@@ -326,7 +326,7 @@ function App() {
           <a href="/LAB_SUNUM(1).pdf" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className="mac-item">📁 Laboratuvar Katılım Sayacı</div>
           </a>
-          <a href="/muzikcalar.png" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <a href="https://github.com/Ikbalbegumer/SQlite_DigitalMusicPlayer.git" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className="mac-item">📁 Python SQLite3 Müzik Çalar</div>
           </a>
         </div>

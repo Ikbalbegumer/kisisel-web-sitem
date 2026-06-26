@@ -33,7 +33,7 @@ body {
   display: block;
 }
 
-/* --- BAŞLIK (BENİM DÜNYAM) --- */
+/* --- BAŞLIK  */
 .room-title {
   position: absolute;
   top: 8px;
@@ -45,13 +45,13 @@ body {
 
 .room-title h1 {
   margin: 0;
-  font-size: 1.5rem; /* Burayı 2rem'den 1.5rem'e veya daha küçük bir değere düşürebilirsin */
+  font-size: 1.5rem; 
   color: white;
-  text-shadow: 0 0 5px #38bdf8, 0 0 20px #38bdf8; /* Gölgeyi de biraz kıstım ki küçük fontta daha net dursun */
+  text-shadow: 0 0 5px #38bdf8, 0 0 20px #38bdf8; 
 }
 
 .room-title p {
-  margin-top: 2px; /* Başlık küçüldüğü için aradaki boşluğu da biraz daralttım */
+  margin-top: 2px; 
   font-size: 0.9rem; /* İstersen alt metni de biraz küçültebilirsin */
   color: rgba(255,255,255,.85);
   text-shadow: 0 2px 5px rgba(0,0,0,0.8);
@@ -60,7 +60,7 @@ body {
 /* --- TAVAN LAMBASI RENK EFEKTİ --- */
 .ceiling-light-overlay {
   position: absolute;
-  top: 8%;  /* Yeni tavan lambasının yeri */
+  top: 8%;  
   left: 50%;
   width: 25%;
   height: 15%;
@@ -117,14 +117,8 @@ body {
 .hotspot.plakcalar  { top: 46%; left: 72%; } /* Beyaz rafın üzerindeki pikap */
 .hotspot.defter     { top: 88%; left: 36%; } /* Yerdeki açık defter */
 .hotspot.kitaplik   { top: 45%; left: 94%; } /* Sağdaki kitaplık */
-
-/* ÇERÇEVE - Önceki Düzeltme Korundu (F12 taktiği) */
 .hotspot.cerceve { top: 24%; left: 40%; } /* iMac solundaki çerçeve */
-
-/* KAHVE - Yeni yerine milimetrik ayarlandı (Masa üzeri, iMac sağında) */
 .hotspot.kahve { top: 47%; left: 41%; } 
-
-/* KIRMIZI TUŞ - Yeni yerine milimetrik ayarlandı (Posterin sağ üst yanındaki anahtar) */
 .hotspot.kirmizitus { top: 15%; left: 63%; } 
 
 /* PENCERE - Yağmur Modu Tetikleyicisi */
