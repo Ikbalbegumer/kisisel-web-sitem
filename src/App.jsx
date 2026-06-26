@@ -1,28 +1,15 @@
-import { useState, useEffect, useRef } from 'react'; // useRef eklendi
+import React, { useState, useEffect, useRef } from 'react'; 
 import './App.css';
 
 // --- GEZİLERİM İÇİN ÖZEL SLIDER BİLEŞENİ ---
 const ImageSlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   
-  // HATA DÜZELTİLDİ: /public/ yazıları kaldırıldı, direkt / ile başlatıldı
   const images = [
-    "/doga1.png",
-    "/doga2.jpeg",
-    "/doga3.jpeg", 
-    "/doga4.JPG",
-    "/doga5.jpeg",
-    "/doga6.jpeg",
-    "/doga7.jpeg",
-    "/doga8.jpeg",
-    "/kus.jpeg",
-    "/samandag.jpeg",
-    "/zurih1.jpeg",
-    "/zurih2.jpeg",
-    "/zurih3.jpeg",
-    "/zurih4.jpeg",
-    "/zurih5.jpeg",
-
+    "/doga1.png", "/doga2.jpeg", "/doga3.jpeg", "/doga4.JPG",
+    "/doga5.jpeg", "/doga6.jpeg", "/doga7.jpeg", "/doga8.jpeg",
+    "/kus.jpeg", "/samandag.jpeg", "/zurih1.jpeg", "/zurih2.jpeg",
+    "/zurih3.jpeg", "/zurih4.jpeg", "/zurih5.jpeg",
   ];
 
   const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % images.length);
@@ -83,90 +70,206 @@ const MusicSlider = () => {
     </div>
   );
 };
-// --- 👽 MATRIX DİJİTAL YAĞMUR BİLEŞENİ (CANVAS TABANLI) ---
-const MatrixRain = () => {
-  const canvasRef = useRef(null);
+const GRID_SIZE = 5;
+const NUM_TILES = GRID_SIZE * GRID_SIZE;
 
+const PuzzleGame = ({ onClose }) => {
+  const [tiles, setTiles] = useState([]);
+  const [isWon, setIsWon] = useState(false);
+
+  // Puzzle'ı başlat ve karıştır
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-
-    // Canvas boyutunu modal container'a göre ayarla
-    const parent = canvas.parentElement;
-    canvas.width = parent.offsetWidth;
-    canvas.height = parent.offsetHeight;
-
-    // Kullanılacak karakterler (Japonca, Latin, Sayılar)
-    const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
-    const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const nums = '0123456789';
-    const alphabet = katakana + latin + nums;
-
-    const fontSize = 16;
-    const columns = canvas.width / fontSize;
-
-    // Her sütun için yağmur damlasının y-koordinatını tutan dizi
-    const rainDrops = [];
-    for (let x = 0; x < columns; x++) {
-      rainDrops[x] = 1; // Hepsi en tepeden başlasın
-    }
-
-    const draw = () => {
-      // Arka planı yarı şeffaf siyah yap (kuyruk efekti için)
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Karakter stilleri
-      ctx.fillStyle = '#0F0'; // Neon yeşil
-      ctx.font = fontSize + 'px monospace';
-
-      // Her sütun için karakteri çiz ve damlayı düşür
-      for (let i = 0; i < rainDrops.length; i++) {
-        const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-        ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
-
-        // Damla ekranın altına geldiyse rastgele bir ihtimalle tepeye sıfırla
-        if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          rainDrops[i] = 0;
-        }
-        rainDrops[i]++;
-      }
-    };
-
-    const intervalId = setInterval(draw, 30); // 30ms'de bir çiz (akıcı animasyon)
-
-    // Bileşen kapandığında animasyonu temizle (hafıza sızıntısını önler)
-    return () => clearInterval(intervalId);
+    initPuzzle();
   }, []);
 
-  return <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%' }} />;
+  const initPuzzle = () => {
+    let newTiles = Array.from({ length: NUM_TILES }, (_, i) => i + 1);
+    newTiles[NUM_TILES - 1] = null; // Boş kare
+
+    // Basit karıştırma (Gerçek oyunda daha kompleks bir karıştırma yapılabilir)
+    for (let i = newTiles.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newTiles[i], newTiles[j]] = [newTiles[j], newTiles[i]];
+    }
+    
+    setTiles(newTiles);
+    setIsWon(false);
+  };
+
+  const handleTileClick = (index) => {
+    if (isWon) return;
+
+    const emptyIndex = tiles.indexOf(null);
+    const isAdjacent = 
+      (index === emptyIndex - 1 && index % GRID_SIZE !== GRID_SIZE - 1) || // Sol
+      (index === emptyIndex + 1 && index % GRID_SIZE !== 0) ||             // Sağ
+      index === emptyIndex - GRID_SIZE ||                                  // Üst
+      index === emptyIndex + GRID_SIZE;                                    // Alt
+
+    if (isAdjacent) {
+      const newTiles = [...tiles];
+      [newTiles[index], newTiles[emptyIndex]] = [newTiles[emptyIndex], newTiles[index]];
+      setTiles(newTiles);
+      checkWin(newTiles);
+    }
+  };
+
+  const checkWin = (currentTiles) => {
+    for (let i = 0; i < NUM_TILES - 1; i++) {
+      if (currentTiles[i] !== i + 1) return;
+    }
+    setIsWon(true);
+  };
+
+  return (
+    <div className="puzzle-modal-overlay">
+      <div className="puzzle-modal-content">
+        <button className="puzzle-close-btn" onClick={onClose}>×</button>
+        <h2 className="puzzle-title">Gizli Odaya Hoş Geldin! 🧩</h2>
+        <p className="puzzle-desc">Taşları sırala (1-24). Boşluk sağ altta olmalı.</p>
+        
+        <div className="puzzle-board">
+          {tiles.map((tile, index) => (
+            <div 
+              key={index} 
+              className={`puzzle-tile ${tile === null ? 'empty' : ''} ${tile === index + 1 ? 'correct' : ''}`}
+              onClick={() => handleTileClick(index)}
+            >
+              {tile}
+            </div>
+          ))}
+        </div>
+
+        {isWon && (
+          <div className="puzzle-win-message">
+            <h3>Tebrikler Begüm! 🎉</h3>
+            <p>Bulmacayı çözdün!</p>
+            <button className="puzzle-restart-btn" onClick={initPuzzle}>Tekrar Oyna</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 function App() {
   const [activeModal, setActiveModal] = useState(null);
   const [lightMode, setLightMode] = useState(0); 
-  useEffect(() => {
-    let tusHafizasi = "";
-    const hedefSifre = "begum"; // Hoca burayı tuşlayacak
+  const [isRainy, setIsRainy] = useState(false);
+  const [showMusicPlayer, setShowMusicPlayer] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentSongIndex, setCurrentSongIndex] = useState(0);
+  
+  // Parallax ve Keşif state'leri
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [visitedHotspots, setVisitedHotspots] = useState([]);
+  const [showCompletion, setShowCompletion] = useState(false);
+  
+  // --- YENİ: PUZZLE STATE'İ ---
+  const [showPuzzle, setShowPuzzle] = useState(false);
 
-    const harfTakipEt = (e) => {
-      if (e.key.length === 1) {
-        tusHafizasi += e.key.toLowerCase();
+  const totalHotspotsCount = 14; 
+
+  const playlist = [
+    { title: "Blowing Smoke", artist: "Gracie Abrams", cover: "/gracie.jpg", src: "/blowingsmoke.mp3" },
+    { title: "Glimpse of Us", artist: "Joji", cover: "/joji.jpg", src: "/GlimpseofUs.mp3" },
+    { title: "Weird Fishes / Arpeggi", artist: "The Cardigans", cover: "/radiohead.jpg", src: "/RadioheadWeirdFishesArpeggi.mp3" }
+  ];
+
+  const rainAudioRef = useRef(null);
+  const musicAudioRef = useRef(null);
+
+  // Parallax Efekti
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      // Puzzle açıkken hareket etmesin
+      if (showPuzzle) return; 
+      
+      const { innerWidth, innerHeight } = window;
+      const x = (e.clientX / innerWidth) - 0.5;
+      const y = (e.clientY / innerHeight) - 0.5;
+      setTilt({ x: x * 1.5, y: -y * 1.5 });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [showPuzzle]);
+
+  // --- YENİ: "BEGUM" ŞİFRESİNİ DİNLEME ---
+  useEffect(() => {
+    let keySequence = '';
+    const secretCode = 'begum';
+
+    const handleKeyDown = (e) => {
+      // Sadece harfleri al ve küçült
+      if (/^[a-zA-Z]$/.test(e.key)) {
+        keySequence += e.key.toLowerCase();
         
-        if (tusHafizasi.length > hedefSifre.length) {
-          tusHafizasi = tusHafizasi.slice(-hedefSifre.length);
+        // Sadece son 5 karakteri tut (şifre uzunluğu kadar)
+        if (keySequence.length > secretCode.length) {
+          keySequence = keySequence.slice(-secretCode.length);
         }
 
-        // App.jsx içindeki useEffect şifre dinleyicisi
-       if (tusHafizasi === hedefSifre) {
-        setActiveModal('secretBait'); // 'easteregg' yerine 'secretBait' yaptık
-        tusHafizasi = ""; 
-}
+        if (keySequence === secretCode) {
+          setShowPuzzle(true);
+          keySequence = ''; // Bulunduktan sonra sıfırla
+        }
       }
     };
 
-    window.addEventListener('keydown', harfTakipEt);
-    return () => window.removeEventListener('keydown', harfTakipEt);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
+
+  const handleHotspotClick = (id) => {
+    if (!visitedHotspots.includes(id)) {
+      const updated = [...visitedHotspots, id];
+      setVisitedHotspots(updated);
+      if (updated.length === totalHotspotsCount) {
+        setTimeout(() => setShowCompletion(true), 500);
+      }
+    }
+  };
+
+  const toggleRainMode = () => {
+    setIsRainy(!isRainy);
+    if (!isRainy && rainAudioRef.current) {
+      rainAudioRef.current.volume = 0.4;
+      rainAudioRef.current.play();
+    } else if (rainAudioRef.current) {
+      rainAudioRef.current.pause();
+    }
+  };
+
+  const handleRecordPlayerClick = () => {
+    setShowMusicPlayer(true);
+  };
+
+  const togglePlay = () => {
+    if (isPlaying) {
+      musicAudioRef.current.pause();
+    } else {
+      musicAudioRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  const nextSong = () => {
+    setCurrentSongIndex((prev) => (prev + 1) % playlist.length);
+    setIsPlaying(true);
+  };
+
+  const prevSong = () => {
+    setCurrentSongIndex((prev) => (prev - 1 + playlist.length) % playlist.length);
+    setIsPlaying(true);
+  };
+
+  useEffect(() => {
+    if (musicAudioRef.current && showMusicPlayer) {
+      musicAudioRef.current.src = playlist[currentSongIndex].src;
+      if (isPlaying) {
+        musicAudioRef.current.play();
+      }
+    }
+  }, [currentSongIndex, isPlaying, showMusicPlayer]);
 
   const getLightClass = () => {
     if (lightMode === 1) return 'light-blue active';
@@ -176,12 +279,12 @@ function App() {
   };
 
   const modalContents = {
-    ukulele: {
+     ukulele: {
       title: "Ukulele Zamanı 🎵",
       content: (
         <>
           <div style={{ background: '#f0f0f0', padding: '15px', borderRadius: '8px', marginBottom: '15px' }}>
-            <p style={{ margin: '0 0 10px 0', fontSize: '0.9rem' }}>Müzik Kaydım:</p>
+            <p style={{ margin: '0 0 10px 0', fontSize: '0.9rem', color: '#333' }}>Müzik Kaydım:</p>
             <audio controls style={{ width: '100%' }}>
              <source src="/ses.mp3" type="audio/mpeg" />
             </audio>
@@ -210,43 +313,23 @@ function App() {
     bilgisayar: {
       title: "BEGUM-MacBook-Air",
       content: (
-        <>
-          <div className="mac-folder-grid">
-            {/* HATA DÜZELTİLDİ: Sınıf isimleri mac-item yapıldı ve tıklanınca dosyayı açması için link (a) eklendi */}
-            <a href="/cv.pdf" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div className="mac-item">📄 CV.pdf</div>
-            </a>
-            <a href="/robotkol.jpg" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div className="mac-item">📁 Robot Kol Projesi</div>
-            </a>
-            <a href="/tarımcık.jpeg" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div className="mac-item">📁 Tarım Aracı</div>
-            </a>
-          
-            <a href="/LAB_SUNUM(1).pdf" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div className="mac-item">📁 Laboratuvar Katılım Sayacı</div>
-            </a>
-            
-            <a href="/muzikcalar.png" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div className="mac-item">📁 Python SQLite3 Müzik Çalar</div>
-            </a>
-            {/* Mevcut dosyaların (CV, Robot Kol vs.) bittiği yerin hemen altına bunu ekle: */}
-            <a 
-              href="#" 
-              onClick={(e) => { e.preventDefault(); setActiveModal('fakeError'); }} 
-              style={{ textDecoration: 'none', color: 'inherit' }}
-            >
-              <div className="mac-item" style={{ 
-                color: '#ff3333', 
-                fontWeight: 'bold', 
-                border: '2px dashed #ff3333',
-                backgroundColor: 'rgba(255, 0, 0, 0.05)'
-              }}>
-                🚨 SİSTEM_AYARLARI_DOKUNMA.exe
-              </div>
-            </a>
-          </div>
-        </>
+        <div className="mac-folder-grid">
+          <a href="/cv.pdf" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div className="mac-item">📄 CV.pdf</div>
+          </a>
+          <a href="/robotkol.jpg" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div className="mac-item">📁 Robot Kol Projesi</div>
+          </a>
+          <a href="/tarımcık.jpeg" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div className="mac-item">📁 Tarım Aracı</div>
+          </a>
+          <a href="/LAB_SUNUM(1).pdf" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div className="mac-item">📁 Laboratuvar Katılım Sayacı</div>
+          </a>
+          <a href="/muzikcalar.png" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div className="mac-item">📁 Python SQLite3 Müzik Çalar</div>
+          </a>
+        </div>
       )
     },
     kahve: {
@@ -256,6 +339,8 @@ function App() {
     defter: {
       title: "Çizimlerim 🎨",
       content: (
+        <>
+          <p>Çizim yapmaktan hoşlanırım.</p>
         <div className="gallery-grid">
           <div className="gallery-item"><img src="/cizim1.jpg" alt="Çizim 1" /></div>
           <div className="gallery-item"><img src="/resim2.jpg" alt="Çizim 2" /></div>
@@ -265,6 +350,7 @@ function App() {
           <div className="gallery-item"><img src="/cizim11.jpg" alt="Çizim 6" /></div>
           <div className="gallery-item"><img src="/cizim12.jpg" alt="Çizim 7" /></div>
         </div>
+         </>
       )
     },
     cerceve: {
@@ -273,7 +359,6 @@ function App() {
         <>
           <p>Yüzmeyi ve dalış yapmayı severim.</p>
           <div className="gallery-grid">
-            {/* HATA DÜZELTİLDİ: /public/ yazıları kaldırıldı */}
             <div className="gallery-item"><img src="/deniz1.jpeg" alt="Dalış 1" /></div>
             <div className="gallery-item"><img src="/deniz2.jpeg" alt="Dalış 2" /></div>
             <div className="gallery-item"><img src="/deniz3.jpeg" alt="Dalış 3" /></div>
@@ -289,17 +374,13 @@ function App() {
           <div className="poster-container">
             <img src="/joji.jpg" alt="Joji" />
           </div>
-          <p style={{ marginTop: '15px' }}>Duvardaki bu poster Joji'nin albüm kapağının resmi.Kendisi sevdiğim şarkıcılardan birisidir.</p>
+          <p style={{ marginTop: '15px' }}>Duvardaki bu poster Joji'nin albüm kapağının resmi. Kendisi sevdiğim şarkıcılardan birisidir.</p>
         </>
       )
     },
     plaklar: {
       title: "Favori Albümlerim 🎧",
-      content: (
-        <>
-          <MusicSlider />
-        </>
-      )
+      content: <MusicSlider />
     },
     raket: {
       title: "Kortlarda 🎾",
@@ -321,172 +402,109 @@ function App() {
           <li><b>Nietzsche Ağladığında</b> - Irvin D. Yalom</li>
           <li><b>Düşüş</b> - Albert Camus</li>
           <li><b>Stoner</b> - John Williams</li>
-          <li><b>Kurt Gölü</b> John Verdon</li>
+          <li><b>Kurt Gölü</b> - John Verdon</li>
           <li><b>Martin Eden</b> - Jack London</li>
           <li><b>Gün Olur Asra Bedel</b> - Cengiz Aytmatov</li>
-          <li><b>Monte Kristo Kontu</b> -Alexandre Dumas</li>
-          <li><b>Usta ve Margarita</b> - Jack London</li>
+          <li><b>Monte Kristo Kontu</b> - Alexandre Dumas</li>
+          <li><b>Usta ve Margarita</b> - Mikhail Bulgakov</li>
           <li><b>1984</b> - George Orwell </li>
           <li><b>Fahrenheit 451</b> - Ray Bradbury</li>
         </ul>
       )
-    },
-    // ... kitaplik vs bittikten sonra:
-    secretBait: {
-      title: "🕵️ Gizli Bölgeye Giriş Yapıldı",
-      content: (
-        <div style={{ padding: '40px 20px', textAlign: 'center' }}>
-          <p style={{ fontSize: '1.2rem', marginBottom: '30px', color: '#333' }}>
-            Klavye şifresini başarıyla çözdünüz Hocam. <br/> 
-            Burada kimsenin bilmediği, projeye dair en büyük gerçeği gizledim...
-          </p>
-          <button 
-            onClick={() => setActiveModal('easteregg')}
-            style={{
-              background: 'linear-gradient(45deg, #000, #444)',
-              color: '#fff',
-              border: 'none',
-              padding: '18px 30px',
-              borderRadius: '15px',
-              fontSize: '1.2rem',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
-              transition: '0.3s'
-            }}
-          >
-            🔒 Benim Hakkımdaki En Büyük Sırrı Öğrenmek İçin Tıklayın
-          </button>
-        </div>
-      )
-    },
-    easteregg: {
-      title: " ÖĞRENCİ İŞLERİ SİSTEMİNE SIZILDI - Final notu: 100",
-      content: (
-      <div style={{ width: '100%', minHeight: '70vh', position: 'relative', overflow: 'hidden', background: '#000' }}>
-          <MatrixRain />
-          <audio src="/rickroll.mp3" autoPlay loop style={{ display: 'none' }}></audio>
-          <div className="hacker-overlay-text">
-            <div style={{ fontSize: '1rem', marginBottom: '10px' }}>[BEGUM OS v1.0 - EĞLENCE MODU AKTİF]</div>
-            <div style={{ fontSize: '1.8rem', marginTop: '20px', fontWeight: 'bold' }}>
-              &gt; Merhaba Hocam, <br/> Rickroll'landınız_😄 <br/> <br/> 
-             
-             Rick Astley diyor ki: "Bu finalden sizi asla bırakmayacağım" 🕺
-            </div>
-            <div style={{ fontSize: '1rem', marginTop: '15px', color: '#0F0' }}>
-               "Never Gonna Give You Up, Never Gonna Let You Down..."
-            </div>
-            <div style={{ fontSize: '0.8rem', marginTop: '20px', color: '#f00' }}>[DERS: İNTERNET PROGRAMLAMA - Final: 100?]</div>
-          </div>
-        </div>
-      )
-    },
-    fakeError: {
-      title: "", 
-      content: (
-        <div style={{
-          background: '#1e1e1e',
-          color: '#f8c555',
-          fontFamily: "'Courier New', Courier, monospace",
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          textAlign: 'left',
-          boxSizing: 'border-box',
-          padding: '20px'
-        }}>
-          <div style={{ maxWidth: '700px', width: '100%' }}>
-            {/* Sahte Vite Başlığı */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '30px', justifyContent: 'center' }}>
-              <span style={{ color: '#ff3333', fontSize: '2rem' }}>❌</span>
-              <h1 style={{ color: '#fff', fontSize: '1.6rem', margin: 0, fontWeight: 'bold' }}>VITE / REACT FATAL ERROR</h1>
-            </div>
-
-            <h2 style={{ color: '#ff3333', fontSize: '2.2rem', margin: '0 0 15px 0' }}>🚨 Uncaught TypeError</h2>
-            <p style={{ fontSize: '1.4rem', color: '#fff', marginBottom: '20px' }}>
-              <span style={{ color: '#ff7b72' }}>Professor_Forgot_To_Give_AA</span> is not a function
-            </p>
-            
-            {/* Sahte Hata Satırları */}
-            <div style={{ background: '#2d2d2d', padding: '20px', borderRadius: '5px', marginBottom: '40px', borderLeft: '4px solid #ff7b72' }}>
-              <p style={{ margin: '8px 0', color: '#8b949e', fontSize: '1.1rem' }}>
-                at <span style={{ color: '#d2a8ff' }}>evaluateFinalProject</span> (src/Balikesir_Uni_Final.js:100:0)
-              </p>
-              <p style={{ margin: '8px 0', color: '#8b949e', fontSize: '1.1rem' }}>
-                at <span style={{ color: '#d2a8ff' }}>App.render</span> (src/App.jsx:404:13)
-              </p>
-              <p style={{ margin: '8px 0', color: '#8b949e', fontSize: '1.1rem' }}>
-                at <span style={{ color: '#d2a8ff' }}>ReactDom.createRoot</span> (node_modules/react-dom/client.js:12:5)
-              </p>
-            </div>
-            
-            {/* Kurtarma Butonu */}
-            <div style={{ textAlign: 'center' }}>
-              <button 
-                onClick={() => setActiveModal('bilgisayar')}
-                style={{
-                  background: '#fff',
-                  color: '#000',
-                  border: 'none',
-                  padding: '12px 25px',
-                  fontSize: '1.1rem',
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                  borderRadius: '6px',
-                  boxShadow: '0 4px 15px rgba(255, 255, 255, 0.2)',
-                  transition: '0.2s'
-                }}
-                onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
-                onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
-              >
-               Odaya Geri Dönmek İçin Tıklayın...
-              </button>
-            </div>
-          </div>
-        </div>
-      )
-    },
+    }
   };
 
   return (
-    <div className="App">
-      <div className="room-container">
+    <div className={`App ${isRainy ? 'dark-rainy-mode' : ''}`}>
+      
+      <audio ref={rainAudioRef} loop>
+        <source src="/rain.mp3" type="audio/mpeg" />
+      </audio>
+
+      <audio ref={musicAudioRef} onEnded={nextSong} />
+
+      <div 
+        className="room-container"
+        style={{
+          transform: `perspective(1000px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scale(1.02)`,
+          transition: 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+        }}
+      >
+        <div className="room-title">
+      
+          <p>Keşfedilenler({visitedHotspots.length}/{totalHotspotsCount})</p>
+        </div>
+        
         <img src="/room_image.jpg" alt="Benim Odam" className="room-image" />
+        
+        {isRainy && <div className="rain-overlay"></div>}
         
         <div className={`ceiling-light-overlay ${getLightClass()}`}></div>
 
-        <div className="hotspot ukulele" onClick={() => setActiveModal('ukulele')}></div>
-        <div className="hotspot kaykay" onClick={() => setActiveModal('kaykay')}></div>
-        <div className="hotspot gezilerim" onClick={() => setActiveModal('gezilerim')}></div>
-        <div className="hotspot bilgisayar" onClick={() => setActiveModal('bilgisayar')}></div>
-        <div className="hotspot kahve" onClick={() => setActiveModal('kahve')}></div>
-        <div className="hotspot defter" onClick={() => setActiveModal('defter')}></div>
-        <div className="hotspot cerceve" onClick={() => setActiveModal('cerceve')}></div>
-        <div className="hotspot poster" onClick={() => setActiveModal('poster')}></div>
-        <div className="hotspot plaklar" onClick={() => setActiveModal('plaklar')}></div>
-        <div className="hotspot raket" onClick={() => setActiveModal('raket')}></div>
-        <div className="hotspot kitaplik" onClick={() => setActiveModal('kitaplik')}></div>
-        
-        <div className="hotspot kirmizitus" onClick={() => setLightMode((prev) => (prev + 1) % 4)}></div>
+        {/* --- HOTSPOTLAR --- */}
+        <div className="hotspot ukulele" onClick={() => { handleHotspotClick('ukulele'); setActiveModal('ukulele'); }}></div>
+        <div className="hotspot kaykay" onClick={() => { handleHotspotClick('kaykay'); setActiveModal('kaykay'); }}></div>
+        <div className="hotspot gezilerim" onClick={() => { handleHotspotClick('gezilerim'); setActiveModal('gezilerim'); }}></div>
+        <div className="hotspot bilgisayar" onClick={() => { handleHotspotClick('bilgisayar'); setActiveModal('bilgisayar'); }}></div>
+        <div className="hotspot kahve" onClick={() => { handleHotspotClick('kahve'); setActiveModal('kahve'); }}></div>
+        <div className="hotspot defter" onClick={() => { handleHotspotClick('defter'); setActiveModal('defter'); }}></div>
+        <div className="hotspot cerceve" onClick={() => { handleHotspotClick('cerceve'); setActiveModal('cerceve'); }}></div>
+        <div className="hotspot poster" onClick={() => { handleHotspotClick('poster'); setActiveModal('poster'); }}></div>
+        <div className="hotspot plaklar" onClick={() => { handleHotspotClick('plaklar'); setActiveModal('plaklar'); }}></div>
+        <div className="hotspot plakcalar" onClick={() => { handleHotspotClick('plakcalar'); handleRecordPlayerClick(); }} title="Müzik Dinle"></div>
+        <div className="hotspot raket" onClick={() => { handleHotspotClick('raket'); setActiveModal('raket'); }}></div>
+        <div className="hotspot kitaplik" onClick={() => { handleHotspotClick('kitaplik'); setActiveModal('kitaplik'); }}></div>
+        <div className="hotspot kirmizitus" onClick={() => { handleHotspotClick('kirmizitus'); setLightMode((prev) => (prev + 1) % 4); }}></div>
+        <div className="hotspot pencere" onClick={() => { handleHotspotClick('pencere'); toggleRainMode(); }} title="Yağmur Modu"></div>
       </div>
 
-      {activeModal && modalContents[activeModal] && (
-        <div className="modal-overlay" onClick={() => setActiveModal(null)}>
-          <div 
-            className={`modal-content ${activeModal === 'easteregg' ? 'hacker-modal' : ''} ${activeModal === 'fakeError' ? 'fatal-error-modal' : ''}`} 
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button className="close-btn" onClick={() => setActiveModal(null)}>×</button>
-            <h2>{modalContents[activeModal].title}</h2>
-            <div className="modal-body">
-              {modalContents[activeModal].content}
-            </div>
+      {/* --- MÜZİK ÇALAR WIDGET --- */}
+      {showMusicPlayer && (
+        <div className="music-player-widget">
+          <button className="close-player" onClick={() => {setShowMusicPlayer(false); setIsPlaying(false); musicAudioRef.current.pause();}}>×</button>
+          <div className={`record-disk ${isPlaying ? 'spinning' : ''}`}>
+            <img src={playlist[currentSongIndex].cover} alt="album cover" />
+            <div className="record-hole"></div>
+          </div>
+          <div className="song-info">
+            <h4>{playlist[currentSongIndex].title}</h4>
+            <p>{playlist[currentSongIndex].artist}</p>
+          </div>
+          <div className="player-controls">
+            <button onClick={prevSong}>⏮</button>
+            <button className="play-pause-btn" onClick={togglePlay}>{isPlaying ? '⏸' : '▶'}</button>
+            <button onClick={nextSong}>⏭</button>
           </div>
         </div>
       )}
+
+      {/* --- STANDART MODAL --- */}
+      {activeModal && modalContents[activeModal] && (
+        <div className="modal-overlay" onClick={() => setActiveModal(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="close-btn" onClick={() => setActiveModal(null)}>×</button>
+            <h2>{modalContents[activeModal].title}</h2>
+            <div className="modal-body">{modalContents[activeModal].content}</div>
+          </div>
+        </div>
+      )}
+
+      {/* --- YENİ: PUZZLE MODALI --- */}
+      {showPuzzle && <PuzzleGame onClose={() => setShowPuzzle(false)} />}
+
+      {/* --- BAŞARI TEBRİK PENCERESİ --- */}
+      {showCompletion && (
+        <div className="completion-overlay">
+          <div className="completion-content">
+            <div className="trophy-icon">🏆</div>
+            <h2>Bütün odayı keşfettiniz!</h2>
+            <div className="percentage-badge">%100 tamamlandı.</div>
+            <p>Harika! Gizli nesnelerin, müziklerin ve odanın tüm detaylarını başarıyla açtınız.</p>
+            <button className="completion-btn" onClick={() => setShowCompletion(false)}>Odaya Geri Dön</button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
